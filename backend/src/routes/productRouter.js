@@ -2,22 +2,22 @@ import express from 'express';
 import { Product } from '../models/product.models.js';
 const productRouter = express.Router();
 
-productRouter.get('/profile/:id', async (req, res)=> {
+productRouter.get('/checkproduct/:id', async (req, res)=> {
     try{
         const { id } = req.params;
-        if(!id) console.log("User Not Found.");
+        if(!id) console.log("Product is Not Found.");
         else{
-           const userProfile = await User.findById(id);
+           const checkProduct = await Product.findById( id );
            res.status(201).json({
-            userProfile
+            checkProduct
            })
         }
     }
-    catch(error){
-       res.status(404).json({
-        message: `Error is : ${error}`
-       })
-        
+    catch (err) {
+        res.status(500).json({
+            message: `Error occurred: ${err.message}`
+        });
+        console.error("Error: ", err);
     }
 
 })
@@ -30,40 +30,33 @@ productRouter.post('/addProduct', async (req, res)=> {
         id : addProduct._id
        })
     }
-    catch(error){
+    catch(err){
         res.status(404).json({
             message: "There is an error!!!"
         })
-        console.log("Error: ", error);
+        console.log("Error: ", err);
         
     }
 })
-productRouter.post('/signin', async (req, res)=> {
-})
-productRouter.put('/update/:id', async (req, res) => {
+productRouter.put('/updateProduct/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, password, phone, address } = req.body; // Extract from req.body
+        const {name, price, stock, category } = req.body; // Extract from req.body
 
         if (!id) {
-            return res.status(400).json({ message: "User ID is required." });
+            return res.status(400).json({ message: "Product ID is required." });
         }
 
         // Find user and update
-        const updateUser = await User.findByIdAndUpdate(
+        const updateProduct = await Product.findByIdAndUpdate(
             id, 
-            { name, email, password, phone, address },
+            { name, price, stock, category },
             { new: true }  // Return the updated user
         );
 
-        // If no user found
-        if (!updateUser) {
-            return res.status(404).json({ message: "User not found." });
-        }
-
-        res.status(200).json({
-            message: "User Updated Successfully.",
-            updatedUser: updateUser
+        res.status(201).json({
+            message: "Product Updated Successfully.",
+            updateProduct: updateProduct
         });
 
     } catch (error) {
@@ -71,14 +64,14 @@ productRouter.put('/update/:id', async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
-productRouter.delete('/logout/:id', async (req, res)=> {
+productRouter.delete('/removeProduct/:id', async (req, res)=> {
     try{
         const { id } = req.params;
-        if(!id) console.log("No user found");
+        if(!id) console.log("No Product found");
         else{
-            const deleterUser = await User.findByIdAndDelete(id);
+            const deleterProduct = await Product.findByIdAndDelete(id);
             res.status(200).json({
-                message: "User deleted Successfully.",
+                message: "Product deleted Successfully.",
                 
             });
         }

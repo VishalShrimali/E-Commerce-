@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { connectionDB } from "../DB";
+import  connectionDB  from "../DB/index.js";
 
 // Establish database connection
 connectionDB();
@@ -8,13 +8,15 @@ connectionDB();
 const orderSchema = new mongoose.Schema(
     {
         userId: {
-            type: String, // User ID as a simple string
-            required: true, // User ID is mandatory
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User", // Reference to the User model
+            required: true,
         },
         productId: {
-            type: String, // Product ID as a simple string
-            required: true, // Product ID is mandatory
-        },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product", // Reference to the Product model
+            required: true,
+        },        
         quantity: {
             type: Number,
             required: true, // Quantity is mandatory
